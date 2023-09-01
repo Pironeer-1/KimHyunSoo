@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import {useState} from 'react';
+
 function Article(props){
   return <article>
     <h2>{props.title}</h2>
@@ -16,15 +18,13 @@ function Header(props){
   </header>
 }
 function Nav(props){
-  const lis = [
-  ]
-
+  const lis = []
   for(let i = 0; i<props.topics.length; i++){
     let t = props.topics[i];
     lis.push(<li key={t.id}>
-      <a id={t.id} href={'/read/'+t.id} onClick={event=>{
+      <a id={t.id}/*여기서 문자가 되버림*/ href={'/read/'+t.id} onClick={event=>{
         event.preventDefault();
-        props.onChangeMode(event.target.id);
+        props.onChangeMode(Number(event.target.id));
       }}>{t.title}</a>
     </li>)
   }
@@ -36,20 +36,41 @@ function Nav(props){
   </nav>
 }
 function App(props) {
+  // const _mode = useState('WELCOME'); // 초기값
+  // const mode = _mode[0]; // useState에서는 0번째는 read
+  // const setMode = _mode[1]; // 1번째 부터는 함수(값을 바꿀때)
+
+  const [mode, setMode] = useState('WELCOME');
+  const [id, setId] = useState(null);
   const topics = [
     {id:1, title:'html', body:'html is ...'},
     {id:2, title:'css', body:'css is ...'},
     {id:3, title:'javascript', body:'javascript is ...'},
   ]
+  let content = null; 
+  if (mode === 'WELCOME'){
+    content = <Article title="Welcome" body="Hello, WEB"></Article>
+  } else if (mode === 'READ'){
+    let title, body = null;
+    for(let i=0; i<topics.length; i++){
+      console.log(topics[i].id, id);
+      if(topics[i].id === id){
+        title = topics[i].title;
+        body = topics[i].body;
+      }
+    }
+    content = <Article title={title} body={body}></Article>
+  }
   return (
     <div>
       <Header title="WEB" onChangeMode={()=>{
-        alert('Header');
+        setMode('WELCOME');
       }}></Header>
-      <Nav topics = {topics} onChangeMode={(id)=>{
-        alert(id);
+      <Nav topics = {topics} onChangeMode={(_id)=>{
+        setMode('READ');
+        setId(_id);
       }}></Nav>
-      <Article title="Welcome" body="Hello, WEB"></Article>
+      {content}
     </div>
   );
 }
