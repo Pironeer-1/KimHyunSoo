@@ -35,6 +35,21 @@ function Nav(props){
     </ol>
   </nav>
 }
+function Create(props){
+  return <article>
+    <h2>Create</h2>
+    <form onSubmit={event =>{
+      event.preventDefault();
+      const title = event.target.title.value;
+      const body = event.target.body.value;
+      props.onCreate(title,body);
+    }}>
+      <p><input type="text" name="title" placeholder='title'/></p>
+      <p><textarea name="body" placeholder='body'></textarea></p>
+      <p><input type="submit" value='Create'/></p>
+    </form>
+  </article>
+}
 function App(props) {
   // const _mode = useState('WELCOME'); // 초기값
   // const mode = _mode[0]; // useState에서는 0번째는 read
@@ -42,11 +57,12 @@ function App(props) {
 
   const [mode, setMode] = useState('WELCOME');
   const [id, setId] = useState(null);
-  const topics = [
+  const [nextId, setNextId] = useState(4);
+  const [topics, setTopics] = useState([
     {id:1, title:'html', body:'html is ...'},
     {id:2, title:'css', body:'css is ...'},
     {id:3, title:'javascript', body:'javascript is ...'},
-  ]
+  ])
   let content = null; 
   if (mode === 'WELCOME'){
     content = <Article title="Welcome" body="Hello, WEB"></Article>
@@ -60,6 +76,16 @@ function App(props) {
       }
     }
     content = <Article title={title} body={body}></Article>
+  } else if (mode === 'CREATE'){
+    content = <Create onCreate={(_title,_body)=>{
+      const newTopic = {id:nextId,title:_title, body:_body}
+      const newTopics = [...topics] // 배열이나 object를 setmode할때는 새로운 상수를 만들고 그걸 복사하는 식으로
+      newTopics.push(newTopic);
+      setTopics(newTopics);
+      setMode('READ');
+      setId(nextId);
+      setNextId(nextId+1);
+    }}></Create>
   }
   return (
     <div>
@@ -71,6 +97,10 @@ function App(props) {
         setId(_id);
       }}></Nav>
       {content}
+      <a href="/create" onClick={event=>{
+        event.preventDefault();
+        setMode('CREATE');
+      }}>Create</a>
     </div>
   );
 }
