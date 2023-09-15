@@ -1,11 +1,11 @@
-var f = function() {
+let f = function() {
     console.log(1+1);
     console.log(1+2);
 }
-var a = [f];
+let a = [f];
 a[0]();
 
-var o = {
+let o = {
     func:f
 }
 o.func();
