@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const url = require('url');
+const qs = require('querystring');
 
 function templateHTML(title, list, body){
     return `
@@ -39,7 +40,7 @@ const app = http.createServer(function(request, response){
         if(queryData.id === undefined){
             fs.readdir('./data', function(error, filelist){
                 let title = 'Welcome';
-                var description = 'Hello, Node.js';
+                let description = 'Hello, Node.js';
                 let list = templateList(filelist);
                 let template = templateHTML(title, list, `<h2>${title}</h2><p>${description}</p>`);
                 response.writeHead(200);
@@ -59,10 +60,10 @@ const app = http.createServer(function(request, response){
         }
     } else if(pathname === '/create'){
         fs.readdir('./data', function(error, filelist){
-            var title = 'WEB - create';
-            var list = templateList(filelist);
-            var template = templateHTML(title, list, `
-                <form action="http://localhost:3000/process_create" method="post">
+            let title = 'WEB - create';
+            let list = templateList(filelist);
+            let template = templateHTML(title, list, `
+                <form action="http://localhost:3000/create_process" method="post">
                     <p><input type="text" name="title" placeholder="title"></p>
                     <p>
                         <textarea name="description" placeholder="description"></textarea>
@@ -75,6 +76,20 @@ const app = http.createServer(function(request, response){
             response.writeHead(200);
             response.end(template);
         });
+    } else if(pathname === '/create_process'){
+        let body = '';
+        request.on('data', function(data){
+            body = body + data;
+        });
+        request.on('end', function(){
+            let post = qs.parse(body);
+            let title = post.title;
+            let description = post.description
+            console.log(title);
+            console.log(description);
+        });
+        response.writeHead(200);
+        response.end('success');
     } else {
         response.writeHead(404);
         response.end('Not found');
