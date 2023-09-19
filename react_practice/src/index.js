@@ -15,14 +15,12 @@ import AttendanceBook from './chapter_10/AttendanceBook';
 import SignUp from './chapter_11/Signup';
 import Calculator from './chapter_12/Calculator';
 import Card from './chapter_13/Card';
+import DarkOrLight from './chapter_14/DarkOrLight';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Card title="Hyunsoo Kim" backgroudColor="#4ea04e">
-      <p>안녕하세요, 김현수입니다.</p>
-      <p>저는 피로니어입니다.</p>
-    </Card>
+    <DarkOrLight />
   </React.StrictMode>
 );
 
