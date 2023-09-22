@@ -177,8 +177,8 @@ app.get('/page/:pageId', function(request, response) {
             var html = template.HTML(sanitizedTitle, list,
                 `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
                 ` <a href="/create">create</a>
-                    <a href="/update?id=${sanitizedTitle}">update</a>
-                    <form action="delete_process" method="post">
+                    <a href="/update/${sanitizedTitle}">update</a>
+                    <form action="/delete_process" method="post">
                         <input type="hidden" name="id" value="${sanitizedTitle}">
                         <input type="submit" value="delete">
                     </form>`
@@ -258,12 +258,27 @@ app.post('/update_process', function(request, response) {
         var description = post.description;
         fs.rename(`data/${id}`, `data/${title}`, function(error) {
             fs.writeFile(`data/${title}`, description, 'utf8', function(err) {
-                response.writeHead(302, {Location: `/?id=${title}`});
+                response.redirect(`/?id=${title}`);
                 response.end();
             });
         });
     });
 });
+app.post('/delete_process', function(request, response) {
+    var body = '';
+    request.on('data', function(data) {
+        body = body + data;
+    });
+    request.on('end', function() {
+        var post = qs.parse(body);
+        var id = post.id;
+        var filteredId = path.parse(id).base;
+        fs.unlink(`data/${filteredId}`, function(error) {
+            response.redirect('/');
+        });
+    });
+});
+
 app.listen(3000, function() {
     console.log('Example app listening on port 3000!')
 });
