@@ -25,5 +25,17 @@ module.exports = {
         }
         list = list+'</ul>';
         return list;
+    },authorSelect:function(authors) {
+        let tag = '';
+        let i = 0;
+        while(i < authors.length){
+            tag += `<option value="${authors[i].id}">${authors[i].name}</option>`;
+            i++;
+        }
+        return `
+            <select name="author">
+                ${tag}
+            </select>    
+        `
     }
 }
