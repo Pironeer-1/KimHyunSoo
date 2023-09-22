@@ -1,20 +1,9 @@
 console.log('Hello no deamon');
 var http = require('http');
-var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
-var path = require('path');
-var sanitizeHtml = require('sanitize-html');
-const mysql = require('mysql');
-
-const db = mysql.createConnection({
-    host:'localhost',
-    user:'nodejs',
-    password:'111111',
-    database: 'opentutorials'
-});
-db.connect();
+const db = require('./lib/db.js');
 
 var app = http.createServer(function(request, response) {
     var _url = request.url;
@@ -105,7 +94,7 @@ var app = http.createServer(function(request, response) {
             );
         });
     } else if(pathname === '/update') {
-        fs.readdir('./data', function(error, filelist) {
+        db.query('SELECT * FROM topic', function(error, topics) {
             if (error) {
                 throw error;
             }
@@ -114,7 +103,7 @@ var app = http.createServer(function(request, response) {
                     throw error2;
                 }
                 db.query(`SELECT * FROM author`, function(error2, authors){
-                    var list = template.list(filelist);
+                    var list = template.list(topics);
                     var html = template.HTML(topic[0].title, list,
                         `
                         <form action="/update_process" method="post">
