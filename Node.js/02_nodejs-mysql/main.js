@@ -3,8 +3,8 @@ var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
 const db = require('./lib/db.js');
-const topic = require('./lib/topic');
-var author = require('./lib/author')
+const topic = require('./lib/topic.js');
+var author = require('./lib/author.js')
 
 var app = http.createServer(function(request, response) {
     var _url = request.url;
